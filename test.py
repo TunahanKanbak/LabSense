@@ -98,7 +98,7 @@ def update_graph(xaxis_column_name, yaxis_column_name,
 
 def create_time_series(dff, axis_type, title):
 
-    fig = px.scatter(dff, x='Year', y='Value')
+    fig = px.scatter(dff, x='Yearr', y='Value')
 
     fig.update_traces(mode='lines+markers')
 
