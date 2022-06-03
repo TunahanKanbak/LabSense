@@ -1,25 +1,28 @@
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State, ctx
+import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import plotly.express as px
 import pandas as pd
 import database as db
+from tabs_contents import login_page, new_data_page, query_page, request_page
+from app import app
 
-app = Dash(__name__)
-exp_List = ["{0}-{1}-{2}".format(row[1], row[2], row[3]) for index, row in db.getUpdatedExpList().iterrows()]
-
-
-app.layout = html.Div(children=[
-    html.Div(children=[
-        dcc.Dropdown(placeholder="Enter a value or refresh the list", id="exp-lister", options=exp_List
+app.layout = dbc.Container([
+    dbc.Tabs([
+        dbc.Tab(children=login_page.login_page, label="Login", active_tab_style={"font-weight": "bold"}, id="login-tab",
+                tab_id="login-tab"),
+        dbc.Tab(children=request_page.request_page, label="Request", active_tab_style={"font-weight": "bold"}, id="request-tab",
+                disabled=True),
+        dbc.Tab(children=query_page.query_page, label="Query", active_tab_style={"font-weight": "bold"}, id="query-tab",
+                disabled=True),
+        dbc.Tab(children=new_data_page.new_data_page, label="New Data", active_tab_style={"font-weight": "bold"},
+                id="new-data-tab", disabled=True),
+        dbc.Tab(label="Logout", id="logout-tab", tab_id="logout-tab",
+                tab_style={"marginLeft": "auto", "text-align": "right"}, disabled=True)],
+        id="tabs",
+        active_tab="login-tab"
     )
-    ], style={"width":"40%", "padding":50}),
-    html.Div(children=[
-        dcc.Dropdown(placeholder="Enter a value or refresh the list", id="exp-lister2", options=exp_List
-    )
-    ], style={"width":"40%", "padding":10}),
-], style={"display":"flex", "flex-direction":"row"})
-
-
+])
 
 if __name__ == '__main__':
     app.run_server(debug=True)
