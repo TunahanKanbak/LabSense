@@ -6,3 +6,4 @@ def getUpdatedExpList():
 def getUpdatedExpResult():
     return pd.read_csv("deneyverisi.csv", header=0)
 
+# yorum
