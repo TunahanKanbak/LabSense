@@ -3,6 +3,7 @@ from dash import Dash, html, dcc, Input, Output, State, ctx
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 from app import app
+from database import database
 
 
 login_page = dbc.Container([
@@ -49,8 +50,14 @@ def loginControl(n_clicks, tab, uname, pword):
         if n_clicks is None:
             raise PreventUpdate
 
-        if uname == "admin" and pword == "root":
-            return False, False, False, False, True, "tab-1", False
+        permission_level = database.getUserPerms(uname, pword)
+
+        if permission_level == "full":
+            return False, False, False, False, True, "request-tab", False
+        elif permission_level == "write":
+            return dash.no_update, dash.no_update, False, False, True, "new-data-tab", dash.no_update
+        elif permission_level == "read":
+            return False, False, False, dash.no_update, True, "request-tab", dash.no_update
         else:
             return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, \
                    dash.no_update, True
