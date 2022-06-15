@@ -32,12 +32,9 @@ def createResultTable(experiment_list):
 
 def createDynamicTable(filter_list):
     filtered_exp_list = exp_list_DB[exp_list_DB["Fullname"].isin(filter_list)]
-    print(filtered_exp_list)
     merged_exp_result = filtered_exp_list.merge(exp_res_DB, how="left", on="id", indicator=True)
-    print(merged_exp_result)
     sorted_exp_result = merged_exp_result.sort_values(["Fullname", "time"])
     sorted_exp_result = sorted_exp_result[sorted_exp_result["_merge"] == "both"]
-    print(sorted_exp_result)
 
     table_header = [html.Thead(html.Tr([html.Th("Exp Name"), html.Th("Time"), html.Th("Result")]))]
     table_body = [html.Tbody([html.Tr([html.Td(value) for value in row]) for index, row

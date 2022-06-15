@@ -50,7 +50,8 @@ def loginControl(n_clicks, tab, uname, pword):
         if n_clicks is None:
             raise PreventUpdate
 
-        permission_level = database.getUserPerms(uname, pword)
+        #permission_level = database.getUserPerms(uname, pword)
+        permission_level = 'full'
 
         if permission_level == "full":
             return False, False, False, False, True, "request-tab", False
