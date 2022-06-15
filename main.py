@@ -1,9 +1,4 @@
-from dash import Dash, html, dcc, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
-from dash.exceptions import PreventUpdate
-import plotly.express as px
-import pandas as pd
-import database as db
 from tabs_contents import login_page, new_data_page, query_page, request_page
 from app import app
 

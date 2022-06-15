@@ -1,9 +1,12 @@
+import dash
 import pandas as pd
+import numpy as np
 from dash import Dash, html, dcc, Input, Output, State, ctx
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 from app import app
+
 
 viscosity_input_table = dbc.Container([
     dbc.Container([
@@ -18,7 +21,7 @@ viscosity_input_table = dbc.Container([
                 dbc.Input(placeholder='Run X', type='text'), width={'size': 3}
             ),
             dbc.Col(
-                dmc.TimeInput(), width={'size': 3}
+                dmc.TimeInput(required=True), width={'size': 3}
             ),
             dbc.Col(
                 dbc.Input(placeholder='4.2', type='number', min=0, max=100), width={'size': 3}
@@ -157,20 +160,28 @@ def submit_data(n_clicks, children, code, operator, date, curative_add):
     if None in [code, operator, date, curative_add] or '' in [code, operator, date, curative_add]:
         raise PreventUpdate
 
-    print('Here is our result:\n{}\n{}\n{}\n{}'.format(code, operator, date, curative_add))
+    print("Code: {}\nOperator: {}\nDate: {}\nCurative_Add: {}".format(code, operator, date, curative_add))
 
     df = pd.DataFrame({'Tag': [],
                            'Time': [],
                            'Result': [],
                            'Temperature': []})
 
+    for r, row in enumerate(children):
+        if r == 0:
+            continue
+        else:
+            new_row = []
 
-    for row in children:
-        for col in row['props']['children']:
+        for c, col in enumerate(row['props']['children']):
             if 'value' in col['props']['children']['props'].keys():
-                #print(col['props']['children'])
-                print(col['props']['children']['props']['value'])
+                new_row.append(col['props']['children']['props']['value'])
+            else:
+                new_row.append(np.nan)
 
+        df.loc[len(df)] = new_row
+
+    print(df)
     return None, None, None, None
 
 
