@@ -45,7 +45,7 @@ login_page = dbc.Container([
     State("username-box", "value"),
     State("password-box", "value")
 )
-def loginControl(n_clicks, tab, uname, pword):
+def yetkiKontrol(n_clicks, tab, uname, pword):
     if ctx.triggered_id == "login-control-button":
         if n_clicks is None:
             raise PreventUpdate

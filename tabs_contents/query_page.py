@@ -22,7 +22,7 @@ query_page = dbc.Container(
     Output("test-area", "children"),
     Input("result-list-picker", "value")
 )
-def createResultTable(experiment_list):
+def sonuclariGoster(experiment_list):
     if experiment_list is None:
         raise PreventUpdate
 
