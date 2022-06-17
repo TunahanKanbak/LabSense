@@ -58,7 +58,10 @@ new_data_page = dbc.Container([
         ),
     dbc.Row([
         dbc.Col([
-            dbc.InputGroup([dbc.InputGroupText("Deney Adi"), dbc.Select(placeholder='Açık Deneyler', options=[{'label': exp, 'value': exp} for exp in list_of_open_request], id='code')]),
+            dbc.InputGroup([dbc.InputGroupText("Deney Adi"),
+                            dbc.Select(placeholder='Açık Deneyler',
+                                       options=[{'label': exp, 'value': exp} for exp in list_of_open_request],
+                                       id='code')]),
             html.Br(),
             dbc.InputGroup([dbc.InputGroupText("Teknisyen"), dbc.Input(disabled=True, type='text', id='operator')]),
             html.Br(),
