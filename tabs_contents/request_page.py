@@ -81,12 +81,12 @@ def talebiIsle(sub_click, modal_click, uname, sub_date, exp_name, exp_type):
                  'deneyKafilesi': exp_name,
                  'deneyTipi': exp_type}
 
-    sql_response, exp_ID = database.deneyTalebiIsle(data_dict)
+    sql_response, request_ID = database.deneyTalebiIsle(data_dict)
 
     if sql_response:
         modal_shown = True
         modal_title = 'Deney talebiniz alınmıştır.'
-        modal_text = 'Deney talebiniz laboratuvara iletilmiştir.\nTalep numaranız {}\'dır.'.format(exp_ID)
+        modal_text = 'Deney talebiniz laboratuvara iletilmiştir.\nTalep numaranız {}\'dır.'.format(request_ID)
         sub_result = True
         return modal_shown, modal_title, modal_text, sub_result
     else:
