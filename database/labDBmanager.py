@@ -154,8 +154,22 @@ class MysqlDBManager:
             self.__session.execute(sql,values)
             self.__connection.commit()
 
-    def deney_sonucu_goruntule():
-        pass
+    def deney_sonucu_goruntule(self):
+
+        self.openDB()        
+
+        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and S.talepID=S.talepID')        
+
+        try:
+            result = self.__session.fetchall()
+            sonuc_list = []
+            for veri in result:
+                sonuc_list.append(veri)
+            return result
+        except cn.Error as err:
+            print("hata" + err) 
+        finally:
+            self.closeDB()
 
 
 obje1 = MysqlDBManager()
@@ -184,3 +198,5 @@ obje1 = MysqlDBManager()
 
 
 # print(obje1.deney_talebi_goruntule())
+
+print(obje1.deney_sonucu_goruntule())
