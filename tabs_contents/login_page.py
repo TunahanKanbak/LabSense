@@ -15,20 +15,20 @@ login_page = dbc.Container([
     dbc.Row([
         dbc.Col([
             dbc.Label("Username"),
-            dbc.Input(placeholder="Please enter your username", type="text", id="username-box")
-        ], width="auto")
+            dbc.Input(type="text", id="username-box")
+        ], width={"size": "auto"})
     ], justify="center"),
     dbc.Row([
         dbc.Col([
             dbc.Label("Password"),
-            dbc.Input(placeholder="Please enter your password", type="password", id="password-box")
+            dbc.Input(type="password", id="password-box")
         ], width="auto")
     ], justify="center"),
     dbc.Row([
         dbc.Col([
             html.Br(),
             dbc.Button("Login", id="login-control-button", color="success")
-        ], width={"size":"auto", "offset":"2"})
+        ], width={"size": "auto", "offset": "2"})
     ], justify="center"),
 ])
 
@@ -43,15 +43,15 @@ login_page = dbc.Container([
     Input("login-control-button", "n_clicks"),
     Input("tabs", "active_tab"),
     State("username-box", "value"),
-    State("password-box", "value")
+    State("password-box", "value"),
+    prevent_initial_call=True
 )
 def yetkiKontrol(n_clicks, tab, uname, pword):
     if ctx.triggered_id == "login-control-button":
         if n_clicks is None:
             raise PreventUpdate
 
-        #permission_level = database.getUserPerms(uname, pword)
-        permission_level = 'full'
+        permission_level = database.kullanıcıKontrol(uname, pword)
 
         if permission_level == "full":
             return False, False, False, False, True, "request-tab", False
