@@ -160,7 +160,7 @@ class MysqlDBManager:
             self.__connection.commit()
 
     def deney_sonucu_goruntule(self):
-
+        #TODO: dataFrame ile dondurulecek
         self.openDB()        
 
         self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')
