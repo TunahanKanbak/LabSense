@@ -13,7 +13,7 @@ def deneyTalebiIsle(dict):
 def deneyVerisiIsle(uname, deney_adi, tarih, dict):
     print('Operator Adi:{}\nDeney Adi:{}\nDeney Tarihi:{}'.format(uname, deney_adi, tarih))
     print('Sonuclar')
-    print(dict)
+    print(pd.DataFrame(dict))
     if uname == 'admin':
         return True, 74572
     else:
