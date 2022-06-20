@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 from dash import Dash, html, dcc, Input, Output, State, ctx
 from dash.exceptions import PreventUpdate
 from app import app
-from database import database
+from database import labDBmanager
 
 
 request_modals = dbc.Modal([
@@ -76,12 +76,20 @@ def talebiIsle(sub_click, modal_click, uname, sub_date, exp_name, exp_type):
     if ctx.triggered_id == 'close_request_modal':
         return False, dash.no_update, dash.no_update, dash.no_update
 
+    print(labDBmanager.obje1.deney_sonucu_goruntule())
+
     data_dict = {'kullaniciAdi': uname,
                  'talepTarihi': sub_date,
                  'deneyKafilesi': exp_name,
                  'deneyTipi': exp_type}
 
-    sql_response, request_ID = database.deneyTalebiIsle(data_dict)
+    if None in data_dict.values() or '' in data_dict.values():
+        raise PreventUpdate
+
+    sql_response, request_ID = labDBmanager.obje1.deney_talebi_isle(data_dict['kullaniciAdi'],
+                                                                    data_dict['deneyTipi'],
+                                                                    data_dict['deneyKafilesi'],
+                                                                    data_dict['talepTarihi'])
 
     if sql_response:
         modal_shown = True

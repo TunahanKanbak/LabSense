@@ -1,8 +1,7 @@
 import mysql.connector as cn
-
 from datetime import date, time
 import pandas as pd
-# from connection import MysqlDBConnection as mycnx
+#from connection import MysqlDBConnection as mycnx
 
 
 
@@ -33,7 +32,7 @@ class MysqlDBManager:
             self.__session    = cnx.cursor()
             print('database baglantisi acildi')
         except cn.Error as e:
-            print ("Error %d: %s" % (e.args[0],e.args[1]))
+            print ("Error %d: %s" % (e.args[0], e.args[1]))
     ## End def __open
 
     def closeDB(self):
@@ -52,7 +51,7 @@ class MysqlDBManager:
 
         try:
             yetki = self.__session.fetchone()
-            return yetki
+            return yetki[0] if yetki else None
         except cn.Error as err:
             print("hata" + err) 
         finally:
@@ -74,9 +73,10 @@ class MysqlDBManager:
             talepID = self.__session.fetchone()
             print(f'son eklenen kayit id: {talepID}')
             self.talep_eder(musteri_adi, talepID[0])
-            return talepID[0]
+            return True, talepID[0]
         except cn.Error as err:
             print('hata: ',  err)
+            return False, -1
         finally:
             self.closeDB()
 
@@ -104,16 +104,22 @@ class MysqlDBManager:
             self.closeDB()
 
     # deney verisini "girisyapar,sahiptir ve deneyversisi tablolarına" işleyen fonsiyon
-    def deney_verisi_isle(self,talepID,lab_gorevlisi, liste):
+    def deney_verisi_isle(self,talepID,lab_gorevlisi, df):
 
-        self.openDB()        
-
+        self.openDB()
+        print(talepID)
+        print(lab_gorevlisi)
+        print(df)
         try:
+            liste = []
+            for _, aciklama, zaman, sonuc, sicaklik in df.itertuples():
+                liste.append((aciklama, zaman, sonuc, sicaklik))
+
             IDlist = []
             for deger in liste:
-                sql ='INSERT INTO deneyverisi (zaman,sicaklik,aciklama,sonuc) VALUES(%s,%s,%s,%s)'
+                sql ='INSERT INTO deneyverisi (aciklama, zaman, sonuc, sicaklik) VALUES(%s,%s,%s,%s)'
                 values = deger
-                self.__session.execute(sql,values)
+                self.__session.execute(sql, values)
                 self.__connection.commit()
                 IDlist.append(self.__session.lastrowid)
                 print(f'son eklenen kayit id: {self.__session.lastrowid}')
@@ -121,9 +127,10 @@ class MysqlDBManager:
             self.sahiptir_ekle(talepID,IDlist)
             self.girisyapar_ekle(lab_gorevlisi,IDlist)
             self.talep_kapat(talepID)
-
+            return True
         except cn.Error as err:
             print('hata: ',  err)
+            return False
         finally:
             self.closeDB()
 
@@ -158,7 +165,7 @@ class MysqlDBManager:
 
         self.openDB()        
 
-        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and S.talepID=S.talepID')        
+        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')
 
         try:
             result = self.__session.fetchall()
@@ -199,4 +206,4 @@ obje1 = MysqlDBManager()
 
 # print(obje1.deney_talebi_goruntule())
 
-print(obje1.deney_sonucu_goruntule())
+#print(obje1.deney_sonucu_goruntule())
