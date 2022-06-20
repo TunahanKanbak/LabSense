@@ -5,10 +5,11 @@ from dash import Dash, html, dcc, Input, Output, State, ctx
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
-from app import app
-from database import database
 
-list_of_open_request = database.deneyTalebiGoruntule()
+from app import app
+from database import labDBmanager
+
+list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
 
 viscosity_input_table = dbc.Container([
     dbc.Container([
@@ -176,24 +177,19 @@ def veriyiIsle(n_clicks, children):
     Input('new_data_submission', 'data'),
     State('code', 'value'),
     State('operator', 'value'),
-    State('date', 'value'),
     prevent_initial_call=True
 )
-def veriyiAktar(close_click, dataFrame, code, operator, date):
+def veriyiAktar(close_click, dataFrame, code, operator):
     if ctx.triggered_id == 'close_new_data_modal':
         return False, dash.no_update, dash.no_update, dash.no_update
 
-    sql_response, exp_ID = database.deneyVerisiIsle(operator, code, date, dataFrame)
+    sql_response = labDBmanager.obje1.deney_verisi_isle(code, operator, pd.DataFrame(dataFrame))
 
     if sql_response:
         modal_shown = True
         modal_title = 'Deney sonucu alınmıştır.'
-        modal_text = 'Deney sonucu sisteme işlenmiştir.\nDeney numarası {}\'dır.'.format(exp_ID)
+        modal_text = 'Deney sonucu sisteme işlenmiştir.'
         sub_result = True
-
-        global list_of_open_request
-        list_of_open_request = database.deneyTalebiGoruntule()
-
         return modal_shown, modal_title, modal_text, sub_result
     else:
         modal_shown = True
@@ -212,3 +208,15 @@ def setKullaniciAdi(log_click, uname):
         raise PreventUpdate
     else:
         return uname
+
+@app.callback(
+    Output('code', 'options'),
+    Input('new_data_submission_result', 'data'),
+    prevent_initial_call=True
+)
+def acikTalepGuncelle(res):
+    if res:
+        list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
+        return [{'label': exp, 'value': exp} for exp in list_of_open_request]
+    else:
+        return dash.no_update

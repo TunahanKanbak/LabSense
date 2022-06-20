@@ -1,21 +1,26 @@
 import pandas as pd
 
-def getUpdatedExpList():
-    df = pd.read_csv("database/deneykodu.csv", header=0)
-    df["Fullname"] = df["urun kodu"] + "-" + df["deney no"].astype("string") + "-" + df["uretim sakalasi"]
-    return df
+def kullanıcıKontrol(uname, passw):
+    return "full"
 
-def getUpdatedExpResult():
-    return pd.read_csv("database/deneyverisi.csv", header=0)
-
-def getUserPerms(uname, pword):
-    if uname == "admin" and pword == "root":
-        return "full"
-    if uname == "customer" and pword == "user":
-        return "read"
-    if uname == "technician" and pword == "user":
-        return "write"
+def deneyTalebiIsle(dict):
+    print(dict)
+    if dict['kullaniciAdi'] == 'admin':
+        return True, 74572
     else:
-        return "denied"
-# yorum
-# dosyada değiklik denemesi
+        return False, 0
+
+def deneyVerisiIsle(uname, deney_adi, tarih, dict):
+    print('Operator Adi:{}\nDeney Adi:{}\nDeney Tarihi:{}'.format(uname, deney_adi, tarih))
+    print('Sonuclar')
+    print(pd.DataFrame(dict))
+    if uname == 'admin':
+        return True, 74572
+    else:
+        return False, 0
+
+def deneyTalebiGoruntule():
+    return ['Tetra-A', 'Tetra-B', 'Beta-A', 'Charlie-B']
+
+def deneySonucuGoruntule():
+    pass
