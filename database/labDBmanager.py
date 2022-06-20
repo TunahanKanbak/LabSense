@@ -158,7 +158,7 @@ class MysqlDBManager:
 
         self.openDB()        
 
-        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and S.talepID=S.talepID')        
+        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')        
 
         try:
             result = self.__session.fetchall()
@@ -173,7 +173,7 @@ class MysqlDBManager:
 
 
 obje1 = MysqlDBManager()
-# sonuc = obje1.kullanici_sec('customer','user')
+# sonuc = obje1.kullanici_sec('customer','user11')
 # print(sonuc)
 
 # sonuc = obje1.deney_talebi_isle('customer','B','Y13-5-small','2022-06-09')
@@ -199,4 +199,4 @@ obje1 = MysqlDBManager()
 
 # print(obje1.deney_talebi_goruntule())
 
-print(obje1.deney_sonucu_goruntule())
+# print(obje1.deney_sonucu_goruntule())
