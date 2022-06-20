@@ -106,10 +106,8 @@ class MysqlDBManager:
     # deney verisini "girisyapar,sahiptir ve deneyversisi tablolarına" işleyen fonsiyon
     def deney_verisi_isle(self,talepID,lab_gorevlisi, df):
 
-        self.openDB()
-        print(talepID)
-        print(lab_gorevlisi)
-        print(df)
+        self.openDB()        
+
         try:
             liste = []
             for _, aciklama, zaman, sonuc, sicaklik in df.itertuples():
@@ -180,7 +178,7 @@ class MysqlDBManager:
 
 
 obje1 = MysqlDBManager()
-# sonuc = obje1.kullanici_sec('customer','user')
+# sonuc = obje1.kullanici_sec('customer','user11')
 # print(sonuc)
 
 # sonuc = obje1.deney_talebi_isle('customer','B','Y13-5-small','2022-06-09')
