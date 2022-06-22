@@ -18,14 +18,15 @@ class MysqlDBManager:
         self.__user     = user
         self.__password = password
         self.__database = database
+        self.openDB()
      
 
     def openDB(self):
         try:
             cnx = cn.connect(
-                host=self.__host, 
-                user=self.__user, 
-                password= self.__password, 
+                host=self.__host,
+                user=self.__user,
+                password= self.__password,
                 database= self.__database
             )
             self.__connection = cnx
@@ -43,7 +44,7 @@ class MysqlDBManager:
 
     # yetki seviyesini kontrol eden fonksiyon
     def kullanici_sec(self,kullanici_adi,sifre):
-        self.openDB()
+        #self.openDB()
 
         sql ='SELECT yetki FROM kullanici WHERE kullaniciAdi=%s AND sifre=%s'
         values = (kullanici_adi,sifre)
@@ -54,20 +55,20 @@ class MysqlDBManager:
             return yetki[0] if yetki else None
         except cn.Error as err:
             print("hata kullanici sec: {}".format(err))
-        finally:
-            self.closeDB()
+        # finally:
+        #     self.closeDB()
 
     # müşterinin yapmış olduğu deney talebini işleyen ve talepID geri döndüren fonksiyon
     def deney_talebi_isle(self,musteri_adi,deney_turu, deney_kafilesi,tarih):
 
-        self.openDB()
+        #self.openDB()
         
         durum = "open"
         sql ='INSERT INTO deneytalebi (tarih,deneyKafilesi,deneyTuru,durum) VALUES(%s,%s,%s,%s)'
         values = (tarih, deney_kafilesi, deney_turu, durum)
 
         try:
-            self.__session.execute(sql,values)
+            self.__session.execute(sql, values)
             self.__connection.commit()
             self.__session.execute('SELECT MAX(talepID) FROM deneytalebi')
             talepID = self.__session.fetchone()
@@ -77,8 +78,8 @@ class MysqlDBManager:
         except cn.Error as err:
             print("hata deney talebi isle: {}".format(err))
             return False, -1
-        finally:
-            self.closeDB()
+        # finally:
+        #     self.closeDB()
 
     def talep_eder(self, musteri_adi, talepID):
 
@@ -89,7 +90,7 @@ class MysqlDBManager:
 
     def deney_talebi_goruntule(self):
 
-        self.openDB()
+        #self.openDB()
 
         try:
             self.__session.execute('SELECT talepID FROM deneytalebi WHERE durum = "open"')
@@ -101,13 +102,13 @@ class MysqlDBManager:
         except cn.Error as err:
             print("hata deney talebi goruntule: {}".format(err))
             return []
-        finally:
-            self.closeDB()
+        # finally:
+        #     self.closeDB()
 
     # deney verisini "girisyapar,sahiptir ve deneyversisi tablolarına" işleyen fonsiyon
     def deney_verisi_isle(self,talepID,lab_gorevlisi, df):
 
-        self.openDB()        
+        #self.openDB()
 
         try:
             liste = []
@@ -130,8 +131,8 @@ class MysqlDBManager:
         except cn.Error as err:
             print("hata deney verisi isle: {}".format(err))
             return False
-        finally:
-            self.closeDB()
+        # finally:
+        #     self.closeDB()
 
     def talep_kapat(self, talepID):
 
@@ -161,7 +162,7 @@ class MysqlDBManager:
             self.__connection.commit()
 
     def deney_sonucu_goruntule(self):
-        self.openDB()        
+        #self.openDB()
 
         df = pd.DataFrame({'deneyID': [],
                            'talepID': [],
@@ -181,8 +182,8 @@ class MysqlDBManager:
         except cn.Error as err:
             print("hata deney sonucu goruntule: {}".format(err))
             return []
-        finally:
-            self.closeDB()
+        # finally:
+        #     self.closeDB()
 
 
 obje1 = MysqlDBManager()
