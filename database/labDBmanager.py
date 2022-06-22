@@ -47,13 +47,13 @@ class MysqlDBManager:
 
         sql ='SELECT yetki FROM kullanici WHERE kullaniciAdi=%s AND sifre=%s'
         values = (kullanici_adi,sifre)
-        self.__session.execute(sql,values)
 
         try:
+            self.__session.execute(sql,values)
             yetki = self.__session.fetchone()
             return yetki[0] if yetki else None
         except cn.Error as err:
-            print("hata" + err) 
+            print("hata kullanici sec: {}".format(err))
         finally:
             self.closeDB()
 
@@ -65,9 +65,9 @@ class MysqlDBManager:
         durum = "open"
         sql ='INSERT INTO deneytalebi (tarih,deneyKafilesi,deneyTuru,durum) VALUES(%s,%s,%s,%s)'
         values = (tarih, deney_kafilesi, deney_turu, durum)
-        self.__session.execute(sql,values)
 
         try:
+            self.__session.execute(sql,values)
             self.__connection.commit()
             self.__session.execute('SELECT MAX(talepID) FROM deneytalebi')
             talepID = self.__session.fetchone()
@@ -75,7 +75,7 @@ class MysqlDBManager:
             self.talep_eder(musteri_adi, talepID[0])
             return True, talepID[0]
         except cn.Error as err:
-            print('hata: ',  err)
+            print("hata deney talebi isle: {}".format(err))
             return False, -1
         finally:
             self.closeDB()
@@ -90,16 +90,17 @@ class MysqlDBManager:
     def deney_talebi_goruntule(self):
 
         self.openDB()
-        self.__session.execute('SELECT talepID FROM deneytalebi WHERE durum = "open"')        
 
         try:
+            self.__session.execute('SELECT talepID FROM deneytalebi WHERE durum = "open"')
             result = self.__session.fetchall()
             talep_list = []
             for Id in result:
                 talep_list.append(Id[0])
             return talep_list
         except cn.Error as err:
-            print("hata" + err) 
+            print("hata deney talebi goruntule: {}".format(err))
+            return []
         finally:
             self.closeDB()
 
@@ -127,7 +128,7 @@ class MysqlDBManager:
             self.talep_kapat(talepID)
             return True
         except cn.Error as err:
-            print('hata: ',  err)
+            print("hata deney verisi isle: {}".format(err))
             return False
         finally:
             self.closeDB()
@@ -136,12 +137,12 @@ class MysqlDBManager:
 
         sql ='Update deneytalebi Set durum="closed" where talepID=%s'
         values = (talepID,)
-        self.__session.execute(sql,values)
 
         try:
+            self.__session.execute(sql,values)
             self.__connection.commit()
         except cn.Error as err:
-            print("hata" + err) 
+            print("hata talep kapat: {}".format(err))
 
     def sahiptir_ekle(self, talepID, IDlist):
 
@@ -160,19 +161,26 @@ class MysqlDBManager:
             self.__connection.commit()
 
     def deney_sonucu_goruntule(self):
-        #TODO: dataFrame ile dondurulecek
         self.openDB()        
 
-        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')
-
+        df = pd.DataFrame({'deneyID': [],
+                           'talepID': [],
+                           'sicaklik': [],
+                           'sonuc': [],
+                           'aciklama': [],
+                           'zaman': []})
         try:
+            self.__session.execute('SELECT s.deneyID, s.talepID, DV.sicaklik, DV.sonuc, DV.aciklama, DV.zaman '
+                                   'FROM deneyverisi DV, talepeder T, sahiptir S '
+                                   'WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')
+
             result = self.__session.fetchall()
-            sonuc_list = []
             for veri in result:
-                sonuc_list.append(veri)
-            return result
+                df.loc[len(df)] = veri
+            return df
         except cn.Error as err:
-            print("hata" + err) 
+            print("hata deney sonucu goruntule: {}".format(err))
+            return []
         finally:
             self.closeDB()
 
