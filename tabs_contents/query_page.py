@@ -23,7 +23,7 @@ query_page = dbc.Container([
             html.Br(),
             dbc.Button('İndir', id='download-raw-data-button')
         ], width={"size": 3, "order": "first"}),
-        dbc.Col(dbc.Table(bordered=True, id='result-table')),
+        dbc.Col(dbc.Table([[], []], bordered=True, hover=True, responsive=True, id='result-table')),
     ], justify='between'),
     dbc.Row([
         dbc.Col(
@@ -50,8 +50,9 @@ def sonuclariGoster(experiment_list):
     df_of_results_filtered = df_of_results[df_of_results['talepID'].isin(experiment_list)].sort_values(by=['talepID',
                                                                                                         'zaman'])
     #Table formati
-    table_header = [html.Tr([html.Th(column) for column in df_of_results_filtered.columns])]
-    table_body = [html.Tr([html.Td(data) for data in row]) for index, row in df_of_results_filtered.iterrows()]
+    table_header = [html.Thead(html.Tr([html.Th(column) for column in df_of_results_filtered.columns]))]
+    table_body = [html.Tbody([html.Tr([html.Td(data) for data in row])
+                             for index, row in df_of_results_filtered.iterrows()])]
     #Graph formati
     dateCol = df_of_results_filtered.groupby('talepID').apply(normalizeToKS)['zaman']
     dateCol = dateCol/np.timedelta64(1, 'h')
