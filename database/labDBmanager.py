@@ -1,8 +1,7 @@
 import mysql.connector as cn
 from datetime import date, time
 import pandas as pd
-#from connection import MysqlDBConnection as mycnx
-
+import numpy as np
 
 
 class MysqlDBManager:
@@ -163,14 +162,15 @@ class MysqlDBManager:
         #TODO: dataFrame ile dondurulecek
         self.openDB()        
 
-        self.__session.execute('SELECT * FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')
+        self.__session.execute('SELECT T. talepID, S.deneyID, zaman, sicaklik, sonuc, aciklama FROM deneyverisi DV, talepeder T, sahiptir S WHERE DV.deneyID=S.deneyID and T.talepID=S.talepID')
 
         try:
             result = self.__session.fetchall()
-            sonuc_list = []
-            for veri in result:
-                sonuc_list.append(veri)
-            return result
+            sonuc_list = np.array(result)
+            column_names = ["talepID", "deneyID", "zaman", "sicaklik", "sonuc", "aciklama"]
+            sonuc_df = pd.DataFrame(data=sonuc_list,columns=column_names)
+
+            return sonuc_df
         except cn.Error as err:
             print("hata" + err) 
         finally:
@@ -204,4 +204,4 @@ obje1 = MysqlDBManager()
 
 # print(obje1.deney_talebi_goruntule())
 
-#print(obje1.deney_sonucu_goruntule())
+print(obje1.deney_sonucu_goruntule())
