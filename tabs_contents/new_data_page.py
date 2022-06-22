@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import dash
 import pandas as pd
 import numpy as np
@@ -8,8 +10,6 @@ import dash_mantine_components as dmc
 
 from app import app
 from database import labDBmanager
-
-list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
 
 viscosity_input_table = dbc.Container([
     dbc.Container([
@@ -61,7 +61,7 @@ new_data_page = dbc.Container([
         dbc.Col([
             dbc.InputGroup([dbc.InputGroupText("Deney Adi"),
                             dbc.Select(placeholder='Açık Deneyler',
-                                       options=[{'label': exp, 'value': exp} for exp in list_of_open_request],
+                                       options=[],
                                        id='code')]),
             html.Br(),
             dbc.InputGroup([dbc.InputGroupText("Teknisyen"), dbc.Input(disabled=True, type='text', id='operator')]),
@@ -75,7 +75,7 @@ new_data_page = dbc.Container([
         )], style={'padding-top': '20px'}),
     dbc.Row(
             dbc.Col(
-                dbc.Button('Submit', id='submit_data'), width={'size': 1, 'offset': 11}))
+                dbc.Button('Gönder', id='submit_data'), width={'size': 1, 'offset': 11}))
 ])
 
 @app.callback(
@@ -140,10 +140,11 @@ def update_row(n_clicks_add, n_clicks_remove, submission, rows):
 @app.callback(
     Output('new_data_submission', 'data'),
     Input('submit_data', 'n_clicks'),
+    Input('date', 'value'),
     State('viscosity_table', 'children'),
     prevent_initial_call=True
 )
-def veriyiIsle(n_clicks, children):
+def veriyiIsle(n_clicks, date, children):
     if n_clicks is None:
         raise PreventUpdate
 
@@ -165,6 +166,15 @@ def veriyiIsle(n_clicks, children):
                 new_row.append(np.nan)
 
         df.loc[len(df)] = new_row
+    #Sonuc formundaki zaman kolonu veri girisi yapilan gunu baz almaktadir. Gun degeri operator
+    #tarafindan belirtilen manuel tarihe gore duzeltilir.
+    date = datetime.strptime(date, '%Y-%m-%d')
+
+    df['Time'] = df['Time'].astype('datetime64[ns]')
+    df['Time'] = df['Time'].apply(lambda dt: dt.replace(day=date.day, month=date.month))
+
+    if df.isna().sum().sum() != 0:
+        raise PreventUpdate
 
     return df.to_dict()
 
@@ -211,12 +221,18 @@ def setKullaniciAdi(log_click, uname):
 
 @app.callback(
     Output('code', 'options'),
+    Output('code', 'value'),
     Input('new_data_submission_result', 'data'),
+    Input("tabs", "active_tab"),
     prevent_initial_call=True
 )
-def acikTalepGuncelle(res):
-    if res:
+def acikTalepGuncelle(res, activated):
+    if res or activated == "new-data-tab":
         list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
-        return [{'label': exp, 'value': exp} for exp in list_of_open_request]
+
+        if list_of_open_request is None:
+            return dash.no_update, dash.no_update
+        else:
+            return [{'label': exp, 'value': exp} for exp in list_of_open_request], None
     else:
-        return dash.no_update
+        return dash.no_update, dash.no_update
