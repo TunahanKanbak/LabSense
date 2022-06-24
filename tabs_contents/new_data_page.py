@@ -86,7 +86,7 @@ new_data_page = dbc.Container([
     State('viscosity_table', 'children'),
     prevent_initial_call=True
 )
-def update_row(n_clicks_add, n_clicks_remove, submission, rows):
+def formuGüncelle(n_clicks_add, n_clicks_remove, submission, rows):
     if ctx.triggered_id == 'add_row' and n_clicks_add is not None:
         rows.append(
             dbc.Row([

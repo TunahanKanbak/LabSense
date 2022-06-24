@@ -89,7 +89,7 @@ def deneySonucuGuncelle(activated):
     State('current-data', 'data'),
     prevent_initial_call=True
 )
-def downloadRawData(click, data):
+def hamVeriİndir(click, data):
     df = pd.DataFrame(data)
     return dcc.send_data_frame(df.to_csv, "Result_{}.csv".format(int(datetime.now().timestamp())))
 
