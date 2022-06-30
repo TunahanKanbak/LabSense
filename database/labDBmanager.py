@@ -1,5 +1,5 @@
 import mysql.connector as cn
-from datetime import date, time
+import time
 import pandas as pd
 #from connection import MysqlDBConnection as mycnx
 
@@ -52,11 +52,12 @@ class MysqlDBManager:
         values = (kullanici_adi,sifre)
 
         try:
-            self.__session.execute(sql,values)
+            self.__session.execute(sql, values)
             yetki = self.__session.fetchone()
             return yetki[0] if yetki else None
         except cn.Error as err:
             print("hata kullanici sec: {}".format(err))
+            return None
         finally:
             self.closeDB()
 
@@ -91,7 +92,6 @@ class MysqlDBManager:
         self.__connection.commit()
 
     def deney_talebi_goruntule(self):
-
         self.openDB()
 
         try:
@@ -103,7 +103,7 @@ class MysqlDBManager:
             return talep_list
         except cn.Error as err:
             print("hata deney talebi goruntule: {}".format(err))
-            return []
+            return None
         finally:
             self.closeDB()
 
@@ -183,7 +183,7 @@ class MysqlDBManager:
             return df
         except cn.Error as err:
             print("hata deney sonucu goruntule: {}".format(err))
-            return []
+            return df
         finally:
             self.closeDB()
 

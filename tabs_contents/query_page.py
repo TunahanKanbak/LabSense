@@ -55,12 +55,13 @@ def sonuclariGoster(experiment_list):
     table_body = [html.Tbody([html.Tr([html.Td(data) for data in row])
                              for index, row in df_of_results_filtered.iterrows()])]
     #Graph formati
-    dateCol = df_of_results_filtered.groupby('talepID').apply(normalizeToKS)['zaman']
-    dateCol = dateCol/np.timedelta64(1, 'h')
-    mergedDF = df_of_results_filtered.merge(dateCol, how='inner', left_index=True, right_index=True)
-    # print(dateCol)
-    # print(df_of_results_filtered)
-    # print(mergedDF)
+    try:
+        dateCol = df_of_results_filtered.groupby('talepID').apply(normalizeToKS)['zaman']
+        dateCol = dateCol/np.timedelta64(1, 'h')
+        mergedDF = df_of_results_filtered.merge(dateCol, how='inner', left_index=True, right_index=True)
+    except:
+        print('Dataframe time corruption occured.')
+        raise PreventUpdate
     graph = px.line(mergedDF, x='zaman_y', y='sonuc', text='aciklama', color='talepID')
     graph.update_traces(textposition="bottom right")
     return table_header + table_body, graph, df_of_results_filtered.to_dict()
@@ -72,14 +73,17 @@ def sonuclariGoster(experiment_list):
 )
 def deneySonucuGuncelle(activated):
     if activated == "query-tab":
-        global df_of_results
-        df_of_results = labDBmanager.obje1.deney_sonucu_goruntule()
-        list_of_results = df_of_results.loc[:, 'talepID'].unique()
+        try:
+            global df_of_results
+            df_of_results = labDBmanager.obje1.deney_sonucu_goruntule()
+            list_of_results = df_of_results.loc[:, 'talepID'].unique()
 
-        if list_of_results is None:
-            return dash.no_update
-        else:
-            return list_of_results
+            if list_of_results is None:
+                return dash.no_update
+            else:
+                return list_of_results
+        except:
+            raise PreventUpdate
     else:
         return dash.no_update
 
@@ -95,5 +99,11 @@ def hamVeriİndir(click, data):
 
 
 def normalizeToKS(group):
-    group['zaman'] = group['zaman'] - group[group['aciklama'].str.upper() == 'KS']['zaman'].iloc[0]
+    #KS bilgisinin bulundugu deney gruplarinda olcumlerin zaman degerleri KS bolgeleri 0 kabul edilerek bagil degerler
+    #atanacaktir.
+    #KS bilgisinin bulunmadigi deneylerde ise ilk olcum zamani KS sayilacaktir.
+    try:
+        group['zaman'] = group['zaman'] - group[group['aciklama'].str.upper() == 'KS']['zaman'].iloc[0]
+    except:
+        group['zaman'] = group['zaman'] - group['zaman'].min()
     return group

@@ -140,12 +140,12 @@ def formuGüncelle(n_clicks_add, n_clicks_remove, submission, rows):
 @app.callback(
     Output('new_data_submission', 'data'),
     Input('submit_data', 'n_clicks'),
-    Input('date', 'value'),
+    State('date', 'value'),
     State('viscosity_table', 'children'),
     prevent_initial_call=True
 )
 def veriyiIsle(n_clicks, date, children):
-    if n_clicks is None:
+    if any([n_clicks is None, date is None, date == '']):
         raise PreventUpdate
 
     df = pd.DataFrame({'Tag': [],
@@ -166,15 +166,16 @@ def veriyiIsle(n_clicks, date, children):
                 new_row.append(np.nan)
 
         df.loc[len(df)] = new_row
+
+    if df.isna().sum().sum() != 0:
+        raise PreventUpdate
+
     #Sonuc formundaki zaman kolonu veri girisi yapilan gunu baz almaktadir. Gun degeri operator
     #tarafindan belirtilen manuel tarihe gore duzeltilir.
     date = datetime.strptime(date, '%Y-%m-%d')
 
     df['Time'] = df['Time'].astype('datetime64[ns]')
     df['Time'] = df['Time'].apply(lambda dt: dt.replace(day=date.day, month=date.month))
-
-    if df.isna().sum().sum() != 0:
-        raise PreventUpdate
 
     return df.to_dict()
 
@@ -227,12 +228,14 @@ def setKullaniciAdi(log_click, uname):
     prevent_initial_call=True
 )
 def acikTalepGuncelle(res, activated):
-    if res or activated == "new-data-tab":
+    if (ctx.triggered_id == 'new_data_submission_result' and res) or \
+            (ctx.triggered_id == 'tabs' and activated == 'new-data-tab'):
         list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
-
+        print('bum')
         if list_of_open_request is None:
-            return dash.no_update, dash.no_update
+            print('bum2')
+            return ['Sayfayı yenileyin'], None
         else:
             return [{'label': exp, 'value': exp} for exp in list_of_open_request], None
     else:
-        return dash.no_update, dash.no_update
+        raise PreventUpdate
