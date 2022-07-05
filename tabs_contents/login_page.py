@@ -1,10 +1,9 @@
 import dash
-from dash import Dash, html, dcc, Input, Output, State, ctx
+from dash import html, Input, Output, State, ctx
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 from app import app
 from database import labDBmanager
-
 
 login_page = dbc.Container([
     dbc.Row([

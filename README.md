@@ -1,2 +1,2 @@
 # LabSense
-YGPP
+YGP

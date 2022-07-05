@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import dash
 import pandas as pd
 import numpy as np
@@ -8,8 +10,6 @@ import dash_mantine_components as dmc
 
 from app import app
 from database import labDBmanager
-
-list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
 
 viscosity_input_table = dbc.Container([
     dbc.Container([
@@ -59,9 +59,15 @@ new_data_page = dbc.Container([
         ),
     dbc.Row([
         dbc.Col([
+            dbc.Alert("Veri alanları boş bırakılamaz.", id="empty-data-field-error", color="danger", is_open=False,
+                      dismissable=True)
+        ], width="auto")
+    ]),
+    dbc.Row([
+        dbc.Col([
             dbc.InputGroup([dbc.InputGroupText("Deney Adi"),
                             dbc.Select(placeholder='Açık Deneyler',
-                                       options=[{'label': exp, 'value': exp} for exp in list_of_open_request],
+                                       options=[],
                                        id='code')]),
             html.Br(),
             dbc.InputGroup([dbc.InputGroupText("Teknisyen"), dbc.Input(disabled=True, type='text', id='operator')]),
@@ -75,7 +81,7 @@ new_data_page = dbc.Container([
         )], style={'padding-top': '20px'}),
     dbc.Row(
             dbc.Col(
-                dbc.Button('Submit', id='submit_data'), width={'size': 1, 'offset': 11}))
+                dbc.Button('Gönder', id='submit_data'), width={'size': 1, 'offset': 11}))
 ])
 
 @app.callback(
@@ -86,7 +92,7 @@ new_data_page = dbc.Container([
     State('viscosity_table', 'children'),
     prevent_initial_call=True
 )
-def update_row(n_clicks_add, n_clicks_remove, submission, rows):
+def formuGüncelle(n_clicks_add, n_clicks_remove, submission, rows):
     if ctx.triggered_id == 'add_row' and n_clicks_add is not None:
         rows.append(
             dbc.Row([
@@ -139,13 +145,16 @@ def update_row(n_clicks_add, n_clicks_remove, submission, rows):
 
 @app.callback(
     Output('new_data_submission', 'data'),
+    Output("empty-data-field-error", 'is_open'),
     Input('submit_data', 'n_clicks'),
+    State('date', 'value'),
     State('viscosity_table', 'children'),
+    State('code', 'value'),
     prevent_initial_call=True
 )
-def veriyiIsle(n_clicks, children):
-    if n_clicks is None:
-        raise PreventUpdate
+def veriyiIsle(n_clicks, date, children, code):
+    if any([n_clicks is None, date is None, date == '', code is None, code == '']):
+        return dash.no_update, True
 
     df = pd.DataFrame({'Tag': [],
                        'Time': [],
@@ -166,7 +175,17 @@ def veriyiIsle(n_clicks, children):
 
         df.loc[len(df)] = new_row
 
-    return df.to_dict()
+    if df.isna().sum().sum() != 0:
+        return dash.no_update, True
+
+    #Sonuc formundaki zaman kolonu veri girisi yapilan gunu baz almaktadir. Gun degeri operator
+    #tarafindan belirtilen manuel tarihe gore duzeltilir.
+    date = datetime.strptime(date, '%Y-%m-%d')
+
+    df['Time'] = df['Time'].astype('datetime64[ns]')
+    df['Time'] = df['Time'].apply(lambda dt: dt.replace(day=date.day, month=date.month))
+
+    return df.to_dict(), False
 
 @app.callback(
     Output('new_data_modal', 'is_open'),
@@ -211,12 +230,18 @@ def setKullaniciAdi(log_click, uname):
 
 @app.callback(
     Output('code', 'options'),
+    Output('code', 'value'),
     Input('new_data_submission_result', 'data'),
+    Input("tabs", "active_tab"),
     prevent_initial_call=True
 )
-def acikTalepGuncelle(res):
-    if res:
+def acikTalepGuncelle(res, activated):
+    if (ctx.triggered_id == 'new_data_submission_result' and res) or \
+            (ctx.triggered_id == 'tabs' and activated == 'new-data-tab'):
         list_of_open_request = labDBmanager.obje1.deney_talebi_goruntule()
-        return [{'label': exp, 'value': exp} for exp in list_of_open_request]
+        if list_of_open_request is None:
+            return ['Sayfayı yenileyin'], None
+        else:
+            return [{'label': exp, 'value': exp} for exp in list_of_open_request], None
     else:
-        return dash.no_update
+        raise PreventUpdate

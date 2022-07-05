@@ -76,8 +76,6 @@ def talebiIsle(sub_click, modal_click, uname, sub_date, exp_name, exp_type):
     if ctx.triggered_id == 'close_request_modal':
         return False, dash.no_update, dash.no_update, dash.no_update
 
-    print(labDBmanager.obje1.deney_sonucu_goruntule())
-
     data_dict = {'kullaniciAdi': uname,
                  'talepTarihi': sub_date,
                  'deneyKafilesi': exp_name,
