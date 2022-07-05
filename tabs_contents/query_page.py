@@ -14,6 +14,7 @@ df_of_results = pd.DataFrame({})
 
 query_page = dbc.Container([
     dcc.Store(id='current-data'),
+    dcc.Store(id='data-loaded', data=False),
     dcc.Download(id="download-dataframe-csv"),
     dbc.Row([
         dbc.Col([
@@ -24,11 +25,13 @@ query_page = dbc.Container([
             html.Br(),
             dbc.Button('İndir', id='download-raw-data-button')
         ], width={"size": 3, "order": "first"}),
-        dbc.Col(dbc.Table([[], []], bordered=True, hover=True, responsive=True, id='result-table')),
+        dbc.Col(
+            dcc.Graph(id='result-graph')
+        ),
     ], justify='between'),
     dbc.Row([
         dbc.Col(
-            dcc.Graph(id='result-graph')
+            dbc.Table([[], []], bordered=True, hover=True, responsive=True, id='result-table')
         )
     ])
 ], style={'padding-top': '20px'})
@@ -68,24 +71,26 @@ def sonuclariGoster(experiment_list):
 
 @app.callback(
     Output('result-list-picker', 'options'),
+    Output('data-loaded', 'data'),
     Input("tabs", "active_tab"),
+    State('data-loaded', 'data'),
     prevent_initial_call=True
 )
-def deneySonucuGuncelle(activated):
-    if activated == "query-tab":
+def deneySonucuGuncelle(activated, loaded):
+    if activated == "query-tab" and not(loaded):
         try:
             global df_of_results
             df_of_results = labDBmanager.obje1.deney_sonucu_goruntule()
             list_of_results = df_of_results.loc[:, 'talepID'].unique()
 
             if list_of_results is None:
-                return dash.no_update
+                raise PreventUpdate
             else:
-                return list_of_results
+                return list_of_results, True
         except:
             raise PreventUpdate
     else:
-        return dash.no_update
+        raise PreventUpdate
 
 @app.callback(
     Output('download-dataframe-csv', 'data'),
