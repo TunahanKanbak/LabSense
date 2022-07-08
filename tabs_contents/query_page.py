@@ -65,8 +65,10 @@ def sonuclariGoster(experiment_list):
     except:
         print('Dataframe time corruption occured.')
         raise PreventUpdate
-    graph = px.line(mergedDF, x='zaman_y', y='sonuc', text='aciklama', color='talepID')
+    graph = px.line(mergedDF, x='zaman_y', y='sonuc', text='aciklama', color='talepID', hover_name="talepID",
+                    hover_data={"zaman_y": False, "sicaklik": True, "sonuc": True, "talepID": False, "aciklama": False})
     graph.update_traces(textposition="bottom right")
+    graph.update_layout(hovermode="x unified")
     return table_header + table_body, graph, df_of_results_filtered.to_dict()
 
 @app.callback(
