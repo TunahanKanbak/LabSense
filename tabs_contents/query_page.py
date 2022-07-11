@@ -19,7 +19,7 @@ query_page = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Dropdown(
-                options=[], placeholder="Select an experiment",
+                options=[], placeholder="Talep ID seçiniz.",
                 multi=True, id="result-list-picker"
             ),
             html.Br(),
@@ -86,10 +86,14 @@ def deneySonucuGuncelle(activated, loaded):
             list_of_results = df_of_results.loc[:, 'talepID'].unique()
 
             if list_of_results is None:
+                print("Veriler yüklenemedi.")
                 raise PreventUpdate
             else:
+                print("Veriler yüklendi.")
                 return list_of_results, True
+
         except:
+            print("Veriler yüklenemedi.")
             raise PreventUpdate
     else:
         raise PreventUpdate

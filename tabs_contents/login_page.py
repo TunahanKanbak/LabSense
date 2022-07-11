@@ -13,20 +13,20 @@ login_page = dbc.Container([
     ], justify="left"),
     dbc.Row([
         dbc.Col([
-            dbc.Label("Username"),
+            dbc.Label("Kullanıcı Adı"),
             dbc.Input(type="text", id="username-box")
         ], width={"size": "auto"})
     ], justify="center"),
     dbc.Row([
         dbc.Col([
-            dbc.Label("Password"),
+            dbc.Label("Şifre"),
             dbc.Input(type="password", id="password-box")
         ], width="auto")
     ], justify="center"),
     dbc.Row([
         dbc.Col([
             html.Br(),
-            dbc.Button("Login", id="login-control-button", color="success")
+            dbc.Button("Giriş Yap", id="login-control-button", color="success")
         ], width={"size": "auto", "offset": "2"})
     ], justify="center"),
 ])
