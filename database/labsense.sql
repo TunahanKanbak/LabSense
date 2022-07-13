@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jul 08, 2022 at 09:14 AM
+-- Generation Time: Jul 13, 2022 at 09:39 AM
 -- Server version: 5.7.36
 -- PHP Version: 7.4.26
 
@@ -31,11 +31,11 @@ DROP TABLE IF EXISTS `deneytalebi`;
 CREATE TABLE IF NOT EXISTS `deneytalebi` (
   `talepID` int(11) NOT NULL AUTO_INCREMENT,
   `tarih` date NOT NULL,
-  `deneyKafilesi` varchar(50) CHARACTER SET utf8 NOT NULL,
-  `deneyTuru` enum('A','B') CHARACTER SET utf8 NOT NULL,
-  `durum` varchar(10) CHARACTER SET utf8 NOT NULL,
+  `deneyKafilesi` varchar(50) NOT NULL,
+  `deneyTuru` enum('A','B') NOT NULL,
+  `durum` varchar(10) NOT NULL,
   PRIMARY KEY (`talepID`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=177 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `deneytalebi`
@@ -46,7 +46,12 @@ INSERT INTO `deneytalebi` (`talepID`, `tarih`, `deneyKafilesi`, `deneyTuru`, `du
 (167, '2022-07-05', 'birinci deney', 'B', 'closed'),
 (168, '2022-07-05', 'ikinci deney', 'A', 'closed'),
 (169, '2022-07-05', 'ikinci deney', 'B', 'closed'),
-(171, '2022-07-05', 'deney-kafilesi-adi', 'A', 'closed');
+(171, '2022-07-05', 'deney-kafilesi-adi', 'A', 'closed'),
+(172, '2022-07-11', 'deneme-kafilesi', 'A', 'closed'),
+(173, '2022-07-11', 'deneme-kafilesi', 'A', 'closed'),
+(174, '2022-07-11', 'deneme-kafilesi', 'A', 'closed'),
+(175, '2022-07-12', 'alperen', 'B', 'closed'),
+(176, '2022-07-12', 'deneme-kafilesi', 'A', 'closed');
 
 -- --------------------------------------------------------
 
@@ -60,9 +65,9 @@ CREATE TABLE IF NOT EXISTS `deneyverisi` (
   `zaman` datetime NOT NULL,
   `sicaklik` float NOT NULL,
   `sonuc` float NOT NULL,
-  `aciklama` longtext CHARACTER SET utf8 NOT NULL,
+  `aciklama` longtext NOT NULL,
   PRIMARY KEY (`deneyID`)
-) ENGINE=InnoDB AUTO_INCREMENT=991 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1012 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `deneyverisi`
@@ -106,7 +111,28 @@ INSERT INTO `deneyverisi` (`deneyID`, `zaman`, `sicaklik`, `sonuc`, `aciklama`) 
 (987, '2022-07-24 14:00:00', 50, 6.43, 'KS+2'),
 (988, '2022-07-24 15:00:00', 50, 7.54, 'KS+3'),
 (989, '2022-07-24 16:00:00', 50, 8.13, 'KS+4'),
-(990, '2022-07-24 17:00:00', 50, 9.23, 'KS+5');
+(990, '2022-07-24 17:00:00', 50, 9.23, 'KS+5'),
+(991, '2022-02-01 13:22:00', 50, 9, 'Run 11'),
+(992, '2022-02-01 14:12:00', 50, 6.5, 'KS'),
+(993, '2022-02-01 15:12:00', 40, 5.5, 'KS+1'),
+(994, '2022-02-01 16:12:00', 40, 5.9, 'KS+2'),
+(995, '2022-02-01 17:12:00', 40, 6.5, 'KS+3'),
+(996, '2022-07-01 10:35:00', 50, 6, 'Run 9'),
+(997, '2022-07-01 11:00:00', 50, 7.5, 'Run 11'),
+(998, '2022-07-01 13:00:00', 50, 10, 'KS'),
+(999, '2022-07-01 14:00:00', 50, 6, 'KS+1'),
+(1000, '2022-07-01 15:00:00', 50, 4.76, 'KS+2'),
+(1001, '2022-07-13 13:13:00', 20, 20, 'Run 1'),
+(1002, '2022-07-13 15:30:00', 30, 30, 'Run 9'),
+(1003, '2022-07-13 16:00:00', 40, 40, 'KS'),
+(1004, '2022-07-15 13:15:00', 45, 5, 'Run 1'),
+(1005, '2022-07-15 14:00:00', 50, 7.34, 'Run 2'),
+(1006, '2022-07-15 14:30:00', 50, 5.3, 'KS'),
+(1007, '2022-07-15 15:30:00', 50, 3.2, 'KS+1'),
+(1008, '2022-07-13 13:13:00', 50, 4.5, 'Run 1'),
+(1009, '2022-07-13 13:30:00', 50, 3.3, 'KS'),
+(1010, '2022-07-13 13:45:00', 50, 3, 'KS'),
+(1011, '2022-07-13 14:45:00', 50, 5, 'KS+1');
 
 -- --------------------------------------------------------
 
@@ -120,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `girisyapar` (
   `deneyID` int(11) NOT NULL,
   PRIMARY KEY (`kullaniciAdi`,`deneyID`),
   KEY `girisyapar_fkkey_deneyID` (`deneyID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `girisyapar`
@@ -164,7 +190,28 @@ INSERT INTO `girisyapar` (`kullaniciAdi`, `deneyID`) VALUES
 ('technician', 987),
 ('technician', 988),
 ('technician', 989),
-('technician', 990);
+('technician', 990),
+('tunahan', 991),
+('tunahan', 992),
+('tunahan', 993),
+('tunahan', 994),
+('tunahan', 995),
+('tunahan', 996),
+('tunahan', 997),
+('tunahan', 998),
+('tunahan', 999),
+('tunahan', 1000),
+('tunahan', 1001),
+('tunahan', 1002),
+('tunahan', 1003),
+('technician', 1004),
+('technician', 1005),
+('technician', 1006),
+('technician', 1007),
+('technician', 1008),
+('technician', 1009),
+('technician', 1010),
+('technician', 1011);
 
 -- --------------------------------------------------------
 
@@ -178,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `kullanici` (
   `sifre` varchar(50) NOT NULL,
   `yetki` enum('admin','customer','technician') NOT NULL,
   PRIMARY KEY (`kullaniciAdi`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `kullanici`
@@ -202,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `sahiptir` (
   `deneyID` int(11) NOT NULL,
   PRIMARY KEY (`talepID`,`deneyID`),
   KEY `sahiptir_fkkey_deneyID` (`deneyID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `sahiptir`
@@ -246,7 +293,28 @@ INSERT INTO `sahiptir` (`talepID`, `deneyID`) VALUES
 (171, 987),
 (171, 988),
 (171, 989),
-(171, 990);
+(171, 990),
+(172, 991),
+(172, 992),
+(172, 993),
+(172, 994),
+(172, 995),
+(173, 996),
+(173, 997),
+(173, 998),
+(173, 999),
+(173, 1000),
+(174, 1001),
+(174, 1002),
+(174, 1003),
+(175, 1004),
+(175, 1005),
+(175, 1006),
+(175, 1007),
+(176, 1008),
+(176, 1009),
+(176, 1010),
+(176, 1011);
 
 -- --------------------------------------------------------
 
@@ -260,7 +328,7 @@ CREATE TABLE IF NOT EXISTS `talepeder` (
   `talepID` int(11) NOT NULL,
   PRIMARY KEY (`kullaniciAdi`,`talepID`),
   KEY `talepeder_fkkey_talepID` (`talepID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `talepeder`
@@ -271,7 +339,12 @@ INSERT INTO `talepeder` (`kullaniciAdi`, `talepID`) VALUES
 ('tunahan', 167),
 ('tunahan', 168),
 ('tunahan', 169),
-('customer', 171);
+('customer', 171),
+('tunahan', 172),
+('tunahan', 173),
+('tunahan', 174),
+('customer', 175),
+('customer', 176);
 
 --
 -- Constraints for dumped tables
