@@ -19,7 +19,7 @@ query_page = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Dropdown(
-                options=[], placeholder="Select an experiment",
+                options=[], placeholder="Talep ID seçiniz.",
                 multi=True, id="result-list-picker"
             ),
             html.Br(),
@@ -65,8 +65,10 @@ def sonuclariGoster(experiment_list):
     except:
         print('Dataframe time corruption occured.')
         raise PreventUpdate
-    graph = px.line(mergedDF, x='zaman_y', y='sonuc', text='aciklama', color='talepID')
+    graph = px.line(mergedDF, x='zaman_y', y='sonuc', text='aciklama', color='talepID', hover_name="talepID",
+                    hover_data={"zaman_y": False, "sicaklik": True, "sonuc": True, "talepID": False, "aciklama": False})
     graph.update_traces(textposition="bottom right")
+    graph.update_layout(hovermode="x unified")
     return table_header + table_body, graph, df_of_results_filtered.to_dict()
 
 @app.callback(
@@ -84,10 +86,14 @@ def deneySonucuGuncelle(activated, loaded):
             list_of_results = df_of_results.loc[:, 'talepID'].unique()
 
             if list_of_results is None:
+                print("Veriler yüklenemedi.")
                 raise PreventUpdate
             else:
+                print("Veriler yüklendi.")
                 return list_of_results, True
+
         except:
+            print("Veriler yüklenemedi.")
             raise PreventUpdate
     else:
         raise PreventUpdate

@@ -38,10 +38,10 @@ viscosity_input_table = dbc.Container([
     html.Br(),
     dbc.Row([
         dbc.Col(
-            dbc.Button('Add Row', id='add_row'), width={'size': 'auto', 'order': 'first'}, style={'padding-top': '40px'}
+            dbc.Button('Satır Ekle', id='add_row'), width={'size': 'auto', 'order': 'first'}, style={'padding-top': '40px'}
         ),
         dbc.Col(
-            dbc.Button('Remove Row', id='remove_row'), width={'size': 'auto', 'order': 'last'}, style={'padding-top': '40px'}
+            dbc.Button('Satır Sil', id='remove_row'), width={'size': 'auto', 'order': 'last'}, style={'padding-top': '40px'}
         )
     ])
 ])
